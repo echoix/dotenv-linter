@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### 🚀 Added
 - Build docker image for arm64 [#458](https://github.com/dotenv-linter/dotenv-linter/pull/458) ([@mstruebing](https://github.com/mstruebing))
+
+### 🔧 Changed
+
+## [v3.2.0] - 2022-01-24
+### 🚀 Added
 - Add check for new version [#454](https://github.com/dotenv-linter/dotenv-linter/pull/454) ([@mgrachev](https://github.com/mgrachev))
 - Support of double-quoted multiline values [#453](https://github.com/dotenv-linter/dotenv-linter/pull/453) ([@DDtKey](https://github.com/DDtKey))
 - Support of single-quoted multiline values [#450](https://github.com/dotenv-linter/dotenv-linter/pull/450) ([@DDtKey](https://github.com/DDtKey))
 
 ### 🔧 Changed
+- Update `cargo-deny` config [#459](https://github.com/dotenv-linter/dotenv-linter/pull/459) ([@mgrachev](https://github.com/mgrachev))
 - Update docker build [#456](https://github.com/dotenv-linter/dotenv-linter/pull/456) ([@mgrachev](https://github.com/mgrachev))
 - Update dependencies [#455](https://github.com/dotenv-linter/dotenv-linter/pull/455) ([@mgrachev](https://github.com/mgrachev))
 - Use derive (default) instead of impl [#452](https://github.com/dotenv-linter/dotenv-linter/pull/452) ([@mgrachev](https://github.com/mgrachev))
@@ -21,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add type alias for `Result` [#445](https://github.com/dotenv-linter/dotenv-linter/pull/445) ([@mgrachev](https://github.com/mgrachev))
 - Change edition to 2021 [#444](https://github.com/dotenv-linter/dotenv-linter/pull/444) ([@mgrachev](https://github.com/mgrachev))
 - Display a message on installation error [#443](https://github.com/dotenv-linter/dotenv-linter/pull/443) ([@mgrachev](https://github.com/mgrachev))
+- Fix falling on checking multi-line values [#462](https://github.com/dotenv-linter/dotenv-linter/pull/462) ([@DDtKey](https://github.com/DDtKey))
+- Detect multi-line values if they contain a `=` sign [#463](https://github.com/dotenv-linter/dotenv-linter/pull/463) ([@DDtKey](https://github.com/DDtKey))
 
 ## [v3.1.1] - 2021-08-25
 ### 🚀 Added
@@ -249,6 +257,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace field warning with template for all check structs [#26](https://github.com/dotenv-linter/dotenv-linter/pull/26) ([@mgrachev](https://github.com/mgrachev))
 - Prepare a template for easy adding new checks [#14](https://github.com/dotenv-linter/dotenv-linter/pull/14) ([@mgrachev](https://github.com/mgrachev))
 
+[v3.2.0]: https://github.com/dotenv-linter/dotenv-linter/releases/tag/v3.2.0
 [v3.1.1]: https://github.com/dotenv-linter/dotenv-linter/releases/tag/v3.1.1
 [v3.1.0]: https://github.com/dotenv-linter/dotenv-linter/releases/tag/v3.1.0
 [v3.0.0]: https://github.com/dotenv-linter/dotenv-linter/releases/tag/v3.0.0
