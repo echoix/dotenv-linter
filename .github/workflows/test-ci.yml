@@ -1,5 +1,5 @@
 # Github workflow files do not support YAML anchors.
-name: CI
+name: CI test
 on:
   push:
     branches:
@@ -278,8 +278,8 @@ jobs:
   ###################
   ### Docker jobs ###
   ###################
-  docker_build:
-    name: Build / Docker
+  docker_build_testci:
+    name: Build / Docker test ci
     runs-on: ubuntu-latest
     strategy:
       matrix:

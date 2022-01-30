@@ -9,7 +9,7 @@ COPY benches ./benches
 
 RUN apt-get update && apt-get install musl-tools -y
 
-RUN cargo build --release
+RUN cargo build --release --target aarch64-unknown-linux-musl
 RUN cargo install --target aarch64-unknown-linux-musl --path .
 
 FROM scratch
