@@ -1,0 +1,295 @@
+# Github workflow files do not support YAML anchors.
+name: CI test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+#  ##################
+#  ### Linux jobs ###
+#  ##################
+#  check:
+#    name: Check / Linux
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - uses: actions-rs/toolchain@v1
+#        id: toolchain
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#      - name: Chown cargo registry because of caching
+#        run: sudo chown -R runner ~/.cargo/registry
+#      - name: Cache cargo registry and target
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cargo/registry
+#            target
+#          key: linux-check-${{ steps.toolchain.outputs.rustc_hash }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+#      - name: Check
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: check
+#      - name: Cleanup for caching
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: clean
+#          args: --package dotenv-linter
+#        if: steps.cache-target.outputs.cache-hit != 'true'
+#
+#  fmt:
+#    name: Rustfmt / Linux
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - uses: actions-rs/toolchain@v1
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#          components: rustfmt
+#      - uses: actions-rs/cargo@v1
+#        with:
+#          command: fmt
+#          args: --all -- --check
+#
+#  clippy:
+#    name: Clippy / Linux
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - uses: actions-rs/toolchain@v1
+#        id: toolchain
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#          components: clippy
+#      - name: Chown cargo registry because of caching
+#        run: sudo chown -R runner ~/.cargo/registry
+#      - name: Cache cargo registry and target
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cargo/registry
+#            target
+#          key: clippy-linux-${{ steps.toolchain.outputs.rustc_hash }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+#      - uses: actions-rs/clippy-check@v1
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          args: --all-features -- -D warnings
+#      - name: Cleanup for caching
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: clean
+#          args: --package dotenv-linter
+#        if: steps.cache-target.outputs.cache-hit != 'true'
+#
+#  build:
+#    name: Build / Linux
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - uses: actions-rs/toolchain@v1
+#        id: toolchain
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#      - name: Chown cargo registry because of caching
+#        run: sudo chown -R runner ~/.cargo/registry
+#      - name: Cache cargo registry and target
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cargo/registry
+#            target
+#          key: build-linux-${{ steps.toolchain.outputs.rustc_hash }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+#      - name: Build
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: build
+#      - name: Cleanup for caching
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: clean
+#          args: --package dotenv-linter
+#        if: steps.cache-target.outputs.cache-hit != 'true'
+#
+#  test:
+#    name: Test and coverage / Linux
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - uses: actions-rs/toolchain@v1
+#        id: toolchain
+#        with:
+#          profile: minimal
+#          toolchain: nightly
+#          override: true
+#      - name: Chown cargo registry because of caching
+#        run: sudo chown -R runner ~/.cargo/registry
+#      - name: Set grcov version
+#        run: echo "GRCOV_VERSION=$(cargo search --limit 1 grcov | head -n1 | cut -d '"' -f2)" >> $GITHUB_ENV
+#      - name: Cache cargo registry, target, and grcov binary
+#        id: test-grcov
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cargo/registry
+#            ~/.cargo/bin/grcov
+#            target
+#          key: grcov-${{ steps.toolchain.outputs.rustc_hash }}-cargo-${{ hashFiles('**/Cargo.lock') }}-${{ env.GRCOV_VERSION }}
+#      - name: Install grcov
+#        run: |
+#          cargo install --version $GRCOV_VERSION grcov
+#        if: steps.test-grcov.outputs.cache-hit != 'true'
+#      - name: Clean coverage
+#        run: |
+#          rm -f target/debug/deps/*.gcda
+#          rm -f target/debug/deps/*.gcno
+#      - name: Run tests
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: test
+#          args: --all-features --no-fail-fast
+#        env:
+#          CARGO_INCREMENTAL: "0"
+#          RUSTFLAGS: |
+#            -Zprofile -Zpanic_abort_tests -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Cpanic=abort
+#      - uses: actions-rs/grcov@v0.1
+#      - uses: codecov/codecov-action@v1
+#        with:
+#          file: ./lcov.info
+#      - name: Cleanup for caching
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: clean
+#          args: --package dotenv-linter
+#        if: steps.cache-target.outputs.cache-hit != 'true'
+#
+#  install:
+#    name: Install / Linux
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Setup dotenv-linter
+#        run: |
+#          mkdir -p $HOME/bin
+#          sh "${GITHUB_WORKSPACE}/install.sh" -b $HOME/bin
+#      - name: Verify successful installation
+#        run: $HOME/bin/dotenv-linter -v
+#
+#  ####################
+#  ### Windows jobs ###
+#  ####################
+#  windows_build:
+#    name: Build / Windows
+#    runs-on: windows-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - uses: actions-rs/toolchain@v1
+#        id: toolchain
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#      - name: Cache cargo registry and target
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cargo/registry
+#            target
+#          key: build-windows-${{ steps.toolchain.outputs.rustc_hash }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+#      - name: Build
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: build
+#      - name: Cleanup for caching
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: clean
+#          args: --package dotenv-linter
+#        if: steps.cache-target.outputs.cache-hit != 'true'
+#
+#  windows_test:
+#    name: Test / Windows
+#    runs-on: windows-latest
+#    steps:
+#      - name: Disable EOL conversion
+#        run: git config --global core.autocrlf false
+#      - uses: actions/checkout@v1
+#      - uses: actions-rs/toolchain@v1
+#        id: toolchain
+#        with:
+#          profile: minimal
+#          toolchain: nightly
+#          override: true
+#      - name: Cache cargo registry and target
+#        uses: actions/cache@v2
+#        with:
+#          path: |
+#            ~/.cargo/registry
+#            target
+#          key: test-windows-${{ steps.toolchain.outputs.rustc_hash }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+#      - name: Run tests
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: test
+#          args: --all-features --no-fail-fast
+#      - name: Cleanup for caching
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: clean
+#          args: --package dotenv-linter
+#        if: steps.cache-target.outputs.cache-hit != 'true'
+#
+#  windows_install:
+#    name: Install / Windows
+#    runs-on: windows-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Setup dotenv-linter
+#        shell: bash # it uses Git Bash, i.e. MinGW
+#        run: |
+#          mkdir -p $HOME/bin
+#          sh "${GITHUB_WORKSPACE}/install.sh" -b $HOME/bin
+#      - name: Verify successful installation
+#        shell: bash
+#        run: $HOME/bin/dotenv-linter.exe -v
+#
+#  ##################
+#  ### macOS jobs ###
+#  ##################
+#  macos_install:
+#    name: Install / MacOS
+#    runs-on: macos-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: Setup dotenv-linter
+#        run: |
+#          mkdir -p $HOME/bin
+#          sh "${GITHUB_WORKSPACE}/install.sh" -b $HOME/bin
+#      - name: Verify successful installation
+#        run: $HOME/bin/dotenv-linter -v
+
+  ###################
+  ### Docker jobs ###
+  ###################
+  docker_build_testci:
+    name: Build / Docker test ci
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        docker_arch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build
+        run: docker buildx build --platform linux/${{ matrix.docker_arch }} -f Dockerfile.${{ matrix.docker_arch }}  -t dotenvlinter/dotenv-linter .

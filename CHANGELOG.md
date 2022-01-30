@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### 🚀 Added
+- Build docker image for arm64 [#458](https://github.com/dotenv-linter/dotenv-linter/pull/458) ([@mstruebing](https://github.com/mstruebing))
 
 ### 🔧 Changed
 
